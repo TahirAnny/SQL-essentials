@@ -1,3 +1,22 @@
+### Truncation when concatenating depends on datatype
+- varchar(n) + varchar(n) will truncate at 8,000 characters.
+- nvarchar(n) + nvarchar(n) will truncate at 4,000 characters.
+- varchar(n) + nvarchar(n) will truncate at 4,000 characters. nvarchar has higher precedence so the result is nvarchar(4,000) 
+- [n]varchar(max) + [n]varchar(max) won't truncate (for < 2GB).
+- varchar(max) + varchar(n) won't truncate (for < 2GB) and the result will be typed as varchar(max).
+- varchar(max) + nvarchar(n) won't truncate (for < 2GB) and the result will be typed as nvarchar(max).
+- nvarchar(max) + varchar(n) will first convert the varchar(n) input to nvarchar(n) and then do the concatenation. 
+  If the length of the varchar(n) string is greater than 4,000 characters the cast will be to nvarchar(4000) and truncation will occur.
+  
+### Datatypes of string literals
+If you use the N prefix and the string is <= 4,000 characters long it will be typed as nvarchar(n) where n is the length of the string. So N'Foo' will be treated as nvarchar(3) for example. If the string is longer than 4,000 characters it will be treated as nvarchar(max)
+
+If you don't use the N prefix and the string is <= 8,000 characters long it will be typed as varchar(n) where n is the length of the string. If longer as varchar(max)
+
+For both of the above if the length of the string is zero then n is set to 1.
+
+### Splitting a lerger Query into Chunks
+
 ```
 CREATE PROCEDURE ExecuteMyHugeQuery
     @SQL VARCHAR(MAX) -- 2GB size limit as stated by Martin Smith
@@ -65,4 +84,4 @@ BEGIN
 END
 ```
 
-![Ref:](https://stackoverflow.com/questions/12639948/sql-nvarchar-and-varchar-limits)
+> Credit: Martin Smith & Mike Perrenoud [Ref: Original Post](https://stackoverflow.com/questions/12639948/sql-nvarchar-and-varchar-limits) 
