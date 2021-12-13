@@ -1,4 +1,4 @@
-DECLARE @Search varchar(255)='MTB_GenerateGBAlert'
+DECLARE @Search varchar(255)='Student'
 DECLARE @ObjType varchar(255)=''
 
 
