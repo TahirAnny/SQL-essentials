@@ -11,6 +11,7 @@ WHERE m.definition Like '%'+@Search+'%'
 ORDER BY 2,1
 
 ## 02
+
 SELECT  A.NAME
 	   ,A.TYPE
 	   ,B.TEXT
